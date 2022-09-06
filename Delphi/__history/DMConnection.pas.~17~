@@ -1,0 +1,47 @@
+unit DMConnection;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, Data.Win.ADODB;
+
+type
+  TDMConnect = class(TDataModule)
+    Connect: TADOConnection;
+    QueryProdutos: TADOQuery;
+    DSProdutos: TDataSource;
+    DSClientes: TDataSource;
+    QueryClientes: TADOQuery;
+    QueryClientescodigo: TAutoIncField;
+    QueryClientesnome: TStringField;
+    QueryClientescidade: TStringField;
+    QueryClientesUF: TStringField;
+    QueryProdutoscodigo: TAutoIncField;
+    QueryProdutosdescricao: TStringField;
+    QueryProdutospreco_venda: TFloatField;
+    QueryPedido: TADOQuery;
+    AutoIncField1: TAutoIncField;
+    StringField1: TStringField;
+    FloatField1: TFloatField;
+    procedure DataModuleCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DMConnect: TDMConnect;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+procedure TDMConnect.DataModuleCreate(Sender: TObject);
+begin
+   Connect.Connected := True;
+end;
+
+end.

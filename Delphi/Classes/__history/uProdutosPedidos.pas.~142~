@@ -1,0 +1,174 @@
+unit uProdutosPedidos;
+
+interface
+uses
+  Data.Win.ADODB, uPedidos, DMConnection;
+
+  type TProdutosPedidos = class(TPedidos)
+  private
+    FAutoincrem : integer;
+    FCodigoProduto : integer;
+    FDescProduto : string;
+    FQuantidade : integer;
+    FVlrUnitario : Currency;
+    FTotal : Currency;
+
+    procedure SetVlr_unitario(AValue: Currency);
+    function GetVlr_unitario: Currency;
+    procedure SetCodigoProduto(AValue: Integer);
+    function GetCodigoProduto: Integer;
+
+    var
+      DM : TDMConnect;
+  public
+    constructor Create(ADM : TDMConnect);
+    property autoincrem    : integer read FAutoincrem write FAutoincrem;
+    property descProduto  : string read FDescProduto write FDescProduto;
+    property quantidade    : integer read FQuantidade write FQuantidade;
+    property vlr_unitario  : Currency read GetVlr_unitario write SetVlr_unitario;
+    property Total         : Currency read FTotal write FTotal;
+    property CodigoProduto: integer read GetCodigoProduto write SetCodigoProduto;
+
+    procedure AddOnDataSet(ADataSet : TADODataSet);
+    procedure GravarVenda(ADataSet : TADODataSet);
+    procedure DeleteVenda(ACodigo: integer);
+    function CarregarVenda(ACodigo : integer; ADataSet: TADODataSet): Boolean;
+
+end;
+
+implementation
+
+{ pedidos }
+
+procedure TProdutosPedidos.AddOnDataSet(ADataSet: TADODataSet);
+begin
+  ADataSet.Append;
+  ADataSet.Fieldbyname('codigo_produto').AsInteger := CodigoProduto;
+  ADataSet.Fieldbyname('descricao').AsString       := descProduto;
+  ADataSet.Fieldbyname('quantidade').AsInteger     := quantidade;
+  ADataSet.Fieldbyname('preco_venda').AsCurrency   := vlr_unitario;
+  ADataSet.Fieldbyname('valor_total').AsCurrency   := Total;
+  ADataSet.Post;
+end;
+
+function TProdutosPedidos.CarregarVenda(ACodigo: integer; ADataSet: TADODataSet): Boolean;
+begin
+  DM.QueryPedido.Close;
+  DM.QueryPedido.SQL.Clear;
+  DM.QueryPedido.SQL.Add('SELECT codigo_cliente FROM pedidos WHERE numero_pedido = :pNumeroPedido');
+  DM.QueryPedido.Parameters.ParamByName('pNumeroPedido').Value := ACodigo;
+  DM.QueryPedido.Open;
+  DM.QueryPedido.FieldByName('codigo_cliente').Value;
+
+  DM.QueryProdutosPedidos.Close;
+  DM.QueryProdutosPedidos.SQL.Clear;
+  DM.QueryProdutosPedidos.SQL.Add('SELECT * FROM pedidos_produtos WHERE numero_pedido = :pNumeroPedido');
+  DM.QueryProdutosPedidos.Parameters.ParamByName('pNumeroPedido').Value := ACodigo;
+  DM.QueryProdutosPedidos.Open;
+
+  while not DM.QueryProdutosPedidos.Eof do
+  begin
+    CodigoProduto := DM.QueryProdutosPedidos.FieldByName('codigo_produto').AsInteger;
+    quantidade := DM.QueryProdutosPedidos.FieldByName('quantidade').AsInteger;
+    vlr_unitario := DM.QueryProdutosPedidos.FieldByName('vlr_unitario').AsInteger;
+    AddOnDataSet(ADataSet);
+
+    DM.QueryProdutosPedidos.Next;
+  end;
+
+  result := DM.QueryPedido.RecordCount > 0;
+end;
+
+constructor TProdutosPedidos.Create(ADM: TDMConnect);
+begin
+  inherited;
+  Self.DM := ADM;
+
+  autoincrem := 0;
+  CodigoProduto := 0;
+  quantidade := 0;
+  vlr_unitario := 0.0;
+  Total := 0.0;
+end;
+
+procedure TProdutosPedidos.DeleteVenda(ACodigo: integer);
+begin
+  DM.Connect.BeginTrans;
+  try
+    DM.QueryPedido.SQL.Text := 'DELETE FROM pedidos WHERE numero_pedido = :pCodigo;';
+    DM.QueryPedido.Parameters.ParamByName('pCodigo').Value := ACodigo;
+    DM.QueryPedido.ExecSQL;
+    DM.Connect.CommitTrans;
+  except
+    DM.Connect.RollbackTrans;
+    raise;
+  end;
+
+end;
+
+function TProdutosPedidos.GetCodigoProduto: Integer;
+begin
+  Result := FCodigoProduto;
+end;
+
+function TProdutosPedidos.GetVlr_unitario: Currency;
+begin
+  Result := FVlrUnitario;
+end;
+
+procedure TProdutosPedidos.GravarVenda(ADataSet: TADODataSet);
+var
+  LNumeroPedido: integer;
+begin
+  DM.Connect.BeginTrans;
+  try
+    DM.QueryPedido.SQL.Text := 'INSERT INTO pedidos VALUES (default, :pCliente, :pTotal);';
+    DM.QueryPedido.Parameters.ParamByName('pCliente').Value := self.CodigoCliente;
+    DM.QueryPedido.Parameters.ParamByName('pTotal').Value := self.TotalPedido;
+    DM.QueryPedido.ExecSQL;
+
+    DM.QueryPedido.SQL.Text := 'SELECT MAX(numero_pedido) AS numero_pedido FROM pedidos';
+    DM.QueryPedido.Open;
+    LNumeroPedido := DM.QueryPedido.FieldByName('numero_pedido').AsInteger;
+
+    ADataSet.First;
+    while not ADataSet.Eof do
+    begin
+      DM.QueryProdutosPedidos.SQL.Text := 'INSERT INTO pedidos_produtos VALUES (:pNumeroPedido, :pCodigoProduto,:pQuantidade, :pVlrUnitario, :pTotal);';
+      DM.QueryProdutosPedidos.Parameters.ParamByName('pNumeroPedido').Value := LNumeroPedido;
+      DM.QueryProdutosPedidos.Parameters.ParamByName('pCodigoProduto').Value := ADataSet.Fieldbyname('codigo_produto').AsInteger;
+      DM.QueryProdutosPedidos.Parameters.ParamByName('pQuantidade').Value := ADataSet.Fieldbyname('quantidade').AsInteger;
+      DM.QueryProdutosPedidos.Parameters.ParamByName('pVlrUnitario').Value := ADataSet.Fieldbyname('preco_venda').AsCurrency;
+      DM.QueryProdutosPedidos.Parameters.ParamByName('pTotal').Value := ADataSet.Fieldbyname('valor_total').AsCurrency;
+      dm.QueryProdutosPedidos.ExecSql;
+
+      ADataSet.Next;
+    end;
+
+    DM.Connect.CommitTrans;
+  except
+    DM.Connect.RollbackTrans;
+    raise;
+  end;
+end;
+
+procedure TProdutosPedidos.SetCodigoProduto(AValue: Integer);
+begin
+  FCodigoProduto := AValue;
+
+  DM.QueryProdutos.Close;
+  DM.QueryProdutos.SQL.Text := 'SELECT * FROM produtos WHERE codigo = :pCodigo';
+  DM.QueryProdutos.Parameters.ParamByName('pCodigo').Value := FCodigoProduto;
+  DM.QueryProdutos.Open;
+
+  FDescProduto := DM.QueryProdutos.FieldByName('descricao').AsString;
+  DM.QueryProdutos.Close;
+end;
+
+procedure TProdutosPedidos.SetVlr_unitario(AValue: Currency);
+begin
+  FVlrUnitario := AValue;
+  FTotal := FVlrUnitario * FQuantidade;
+end;
+
+end.

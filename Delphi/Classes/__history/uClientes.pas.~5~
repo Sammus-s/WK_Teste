@@ -1,0 +1,29 @@
+unit uClientes;
+
+interface
+type Clientes = class
+  private
+    FCodigo : integer;
+    FNome : string;
+    FCidade : string;
+    FUF : string;
+  public
+    constructor Create();
+    property Codigo : integer read FCodigo write FCodigo;
+    property Nome   : string read FNome write FNome;
+    property Cidade : string read FCidade write FCidade;
+    property UF     : string read FUF write FUF;
+
+
+end;
+
+implementation
+
+{ Clientes }
+
+constructor Clientes.Create();
+begin
+
+end;
+
+end.

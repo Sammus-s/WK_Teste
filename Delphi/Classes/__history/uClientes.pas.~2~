@@ -1,0 +1,17 @@
+unit uClientes;
+
+interface
+type Clientes = class
+  private
+    FCodigo : integer;
+    FNome : string;
+    FCidade : string;
+    FUF : string;
+  public
+    property Codigo : integer read FCodigo write FCodigo;
+
+end;
+
+implementation
+
+end.

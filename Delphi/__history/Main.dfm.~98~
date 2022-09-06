@@ -1,0 +1,216 @@
+object frmMain: TfrmMain
+  Left = 0
+  Top = 0
+  Caption = 'PEDIDOS DE VENDA'
+  ClientHeight = 369
+  ClientWidth = 633
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pnCampos: TPanel
+    Left = 0
+    Top = 0
+    Width = 633
+    Height = 153
+    Align = alTop
+    Caption = 'pnCampos'
+    ParentShowHint = False
+    ShowCaption = False
+    ShowHint = False
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 262
+      Top = 57
+      Width = 46
+      Height = 13
+      Caption = 'Descri'#231#227'o'
+    end
+    object Label2: TLabel
+      Left = 462
+      Top = 57
+      Width = 63
+      Height = 13
+      Caption = 'Valor unit'#225'rio'
+    end
+    object edtCliente: TLabeledEdit
+      Left = 8
+      Top = 24
+      Width = 121
+      Height = 21
+      Hint = 'C'#243'digo do cliente'
+      EditLabel.Width = 33
+      EditLabel.Height = 13
+      EditLabel.Caption = 'Cliente'
+      NumbersOnly = True
+      TabOrder = 0
+      OnChange = edtClienteChange
+    end
+    object edtNomeCliente: TDBEdit
+      Left = 135
+      Top = 24
+      Width = 194
+      Height = 21
+      Hint = 'Nome do cliente'
+      TabStop = False
+      DataField = 'nome'
+      DataSource = DMConnect.DSClientes
+      ReadOnly = True
+      TabOrder = 5
+    end
+    object edtDescProduto: TDBEdit
+      Left = 262
+      Top = 72
+      Width = 194
+      Height = 21
+      Hint = 'Valor unit'#225'rio do produto'
+      TabStop = False
+      DataField = 'descricao'
+      DataSource = DMConnect.DSProdutos
+      ReadOnly = True
+      TabOrder = 6
+    end
+    object btnInserir: TButton
+      Left = 8
+      Top = 112
+      Width = 89
+      Height = 35
+      Caption = 'INSERIR'
+      TabOrder = 3
+      OnClick = btnInserirClick
+    end
+    object edtQtdeProduto: TLabeledEdit
+      Left = 135
+      Top = 72
+      Width = 121
+      Height = 21
+      Hint = 'Quantidade de itens'
+      EditLabel.Width = 56
+      EditLabel.Height = 13
+      EditLabel.Caption = 'Quantidade'
+      NumbersOnly = True
+      TabOrder = 2
+      OnChange = edtClienteChange
+    end
+    object edtVlrUniProduto: TDBEdit
+      Left = 462
+      Top = 72
+      Width = 163
+      Height = 21
+      Hint = 'Valor unit'#225'rio do produto'
+      TabStop = False
+      DataField = 'preco_venda'
+      DataSource = DMConnect.DSProdutos
+      TabOrder = 4
+    end
+    object edtProduto: TLabeledEdit
+      Left = 8
+      Top = 72
+      Width = 121
+      Height = 21
+      Hint = 'C'#243'digo do produto'
+      EditLabel.Width = 38
+      EditLabel.Height = 13
+      EditLabel.Caption = 'Produto'
+      NumbersOnly = True
+      TabOrder = 1
+      OnChange = edtProdutoChange
+    end
+  end
+  object pnGrid: TPanel
+    Left = 0
+    Top = 153
+    Width = 633
+    Height = 216
+    Align = alClient
+    Caption = 'Panel1'
+    ParentShowHint = False
+    ShowCaption = False
+    ShowHint = False
+    TabOrder = 1
+    object lblTotal: TLabel
+      Left = 304
+      Top = 132
+      Width = 321
+      Height = 33
+      AutoSize = False
+      BiDiMode = bdRightToLeft
+      Caption = '{total da venda}'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -27
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentBiDiMode = False
+      ParentFont = False
+      Transparent = True
+      Visible = False
+    end
+    object gridProdutos: TDBGrid
+      Left = 8
+      Top = 6
+      Width = 617
+      Height = 120
+      DataSource = dsVenda
+      ReadOnly = True
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+      OnKeyDown = gridProdutosKeyDown
+    end
+    object btnGravarVenda: TButton
+      Left = 520
+      Top = 171
+      Width = 105
+      Height = 42
+      Caption = 'GRAVAR'
+      TabOrder = 1
+      OnClick = btnGravarVendaClick
+    end
+    object btnCarregaVenda: TButton
+      Left = 8
+      Top = 171
+      Width = 105
+      Height = 42
+      Caption = 'CARREGAR VENDA'
+      TabOrder = 2
+    end
+    object Button1: TButton
+      Left = 117
+      Top = 171
+      Width = 105
+      Height = 42
+      Caption = 'CANCELAR VENDA'
+      TabOrder = 3
+    end
+  end
+  object dsVenda: TDataSource
+    DataSet = DataSetProdutos
+    Left = 361
+    Top = 16
+  end
+  object DataSetProdutos: TADODataSet
+    AfterPost = DataSetProdutosAfterPost
+    AfterDelete = DataSetProdutosAfterPost
+    AfterRefresh = DataSetProdutosAfterPost
+    Parameters = <>
+    Left = 408
+    Top = 16
+  end
+  object DataSetPedidos: TADODataSet
+    Parameters = <>
+    Left = 480
+    Top = 16
+  end
+end

@@ -1,0 +1,169 @@
+object DMConnect: TDMConnect
+  OldCreateOrder = False
+  OnCreate = DataModuleCreate
+  Height = 244
+  Width = 524
+  object Connect: TADOConnection
+    Connected = True
+    ConnectionString = 
+      'Provider=MSOLEDBSQL;Persist Security Info=False;User ID=sa;Initi' +
+      'al Catalog=WK_Teste;Data Source=(local);Initial File Name="";Ser' +
+      'ver SPN="";Authentication="";Access Token=""'
+    Provider = 'MSOLEDBSQL.1'
+    Left = 48
+    Top = 48
+  end
+  object QueryProdutos: TADOQuery
+    AutoCalcFields = False
+    Connection = Connect
+    CursorType = ctStatic
+    Parameters = <>
+    Left = 224
+    Top = 64
+    object QueryProdutoscodigo: TAutoIncField
+      FieldName = 'codigo'
+      ReadOnly = True
+    end
+    object QueryProdutosdescricao: TStringField
+      FieldName = 'descricao'
+      Size = 100
+    end
+    object QueryProdutospreco_venda: TFloatField
+      FieldName = 'preco_venda'
+    end
+  end
+  object DSProdutos: TDataSource
+    DataSet = QueryProdutos
+    Left = 224
+    Top = 128
+  end
+  object DSClientes: TDataSource
+    DataSet = QueryClientes
+    Left = 136
+    Top = 128
+  end
+  object QueryClientes: TADOQuery
+    AutoCalcFields = False
+    Connection = Connect
+    CursorType = ctStatic
+    Parameters = <>
+    Left = 136
+    Top = 67
+    object QueryClientescodigo: TAutoIncField
+      FieldName = 'codigo'
+      ReadOnly = True
+    end
+    object QueryClientesnome: TStringField
+      FieldName = 'nome'
+      Size = 100
+    end
+    object QueryClientescidade: TStringField
+      FieldName = 'cidade'
+      Size = 100
+    end
+    object QueryClientesUF: TStringField
+      FieldName = 'UF'
+      FixedChar = True
+      Size = 2
+    end
+  end
+  object QueryPedido: TADOQuery
+    AutoCalcFields = False
+    Connection = Connect
+    CursorType = ctStatic
+    Parameters = <
+      item
+        Name = 'pCliente'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = 'pTotal'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        'INSERT INTO pedidos (codigo_cliente, total) VALUES (:pCliente, :' +
+        'pTotal);')
+    Left = 304
+    Top = 64
+    object AutoIncField1: TAutoIncField
+      FieldName = 'codigo'
+      ReadOnly = True
+    end
+    object StringField1: TStringField
+      FieldName = 'descricao'
+      Size = 100
+    end
+    object FloatField1: TFloatField
+      FieldName = 'preco_venda'
+    end
+  end
+  object QueryProdutosPedidos: TADOQuery
+    AutoCalcFields = False
+    Connection = Connect
+    CursorType = ctStatic
+    Parameters = <
+      item
+        Name = 'pNumeroPedido'
+        Attributes = [paSigned, paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Size = 4
+        Value = Null
+      end
+      item
+        Name = 'pCodigoProduto'
+        Attributes = [paSigned, paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Size = 4
+        Value = Null
+      end
+      item
+        Name = 'pQuantidade'
+        Attributes = [paSigned, paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Size = 4
+        Value = Null
+      end
+      item
+        Name = 'pVlrUnitario'
+        Attributes = [paSigned, paNullable]
+        DataType = ftFloat
+        NumericScale = 255
+        Precision = 7
+        Size = 4
+        Value = Null
+      end
+      item
+        Name = 'pTotal'
+        Attributes = [paSigned, paNullable]
+        DataType = ftFloat
+        NumericScale = 255
+        Precision = 7
+        Size = 4
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        'INSERT INTO pedidos_produtos VALUES (:pNumeroPedido, :pCodigoPro' +
+        'duto,'
+      ':pQuantidade, :pVlrUnitario, :pTotal);')
+    Left = 400
+    Top = 64
+    object AutoIncField2: TAutoIncField
+      FieldName = 'codigo'
+      ReadOnly = True
+    end
+    object StringField2: TStringField
+      FieldName = 'descricao'
+      Size = 100
+    end
+    object FloatField2: TFloatField
+      FieldName = 'preco_venda'
+    end
+  end
+end

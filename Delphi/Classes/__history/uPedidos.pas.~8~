@@ -1,0 +1,28 @@
+unit uPedidos;
+
+interface
+type TPedidos = class
+  private
+    FNumeroPedido : integer;
+    FDataEmissao : TDate;
+    FCodigoCliente : integer;
+    FTotal : Currency;
+  public
+    constructor Create();
+    property NumeroPedido  : integer read FNumeroPedido write FNumeroPedido;
+    property DataEmissao   : TDate read FDataEmissao write FDataEmissao;
+    property CodigoCliente : integer read FCodigoCliente write FCodigoCliente;
+    property Total         : Currency read FTotal write FTotal;
+
+end;
+
+implementation
+
+{ Clientes }
+
+constructor TPedidos.Create();
+begin
+  numeroPedido := 0;
+end;
+
+end.

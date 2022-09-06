@@ -1,0 +1,16 @@
+program Projeto_WK_Tec;
+
+uses
+  Vcl.Forms,
+  Main in 'Main.pas' {frmMain},
+  DMConnection in 'DMConnection.pas' {DataModule1: TDataModule},
+  uPedidos in 'Classes\uPedidos.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TfrmMain, frmMain);
+  Application.Run;
+end.
